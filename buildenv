@@ -8,7 +8,7 @@ export ZOPEN_CATEGORIES="development"
 export ZOPEN_NAME="gitlab-runner"
 
 export ZOPEN_COMP=GO
-export ZOPEN_CONFIGURE="zopen_config"
+export ZOPEN_CONFIGURE="zopen_wharf"
 export ZOPEN_CONFIGURE_MINIMAL=1
 export ZOPEN_MAKE="go"
 export ZOPEN_MAKE_OPTS="build"
@@ -25,7 +25,7 @@ zopen_init()
   unset CC CXX
 }
 
-zopen_config()
+zopen_wharf()
 {
   MACHINEID_TAG=$(cat go.mod | grep machineid | cut -d ' ' -f 2)
   AZURESDK=$(cat go.mod | grep azure-sdk-for-go/sdk/storage/azblob | cut -d ' ' -f 2)
@@ -61,26 +61,23 @@ zopen_config()
   git clone https://github.com/golang/sys.git
   echo "Checking out $SYS_TAG"
   cd sys
-  git apply ../patches/sys.patch
+  git apply ../patches/sys-patch
 
   cd .. && echo ""
   git clone https://github.com/saracen/fastzip.git
   echo "Checking out $FASTZIP_TAG"
   cd fastzip
-  git apply ../patches/fastzip.patch
+  git apply ../patches/fastzip-patch
 
   cd .. && echo ""
   git clone https://github.com/hashicorp/go-sockaddr.git
   echo "Checking out $GO-SOCK_TAG"
   cd go-sockaddr
-  git apply ../patches/go-sockaddr.patch
+  git apply ../patches/go-sockaddr-patch
 
   cd .. && echo ""
   go work init ./gitlab-runner ./sys ./fastzip ./go-sockaddr ./machineid ./azure-sdk-for-go/sdk/storage/azblob ./pty
-}
 
-zopen_wharf()
-{
   cd gilab-runner
   git checkout 16-6-stable
 
