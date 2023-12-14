@@ -1,0 +1,150 @@
+diff --git a/commands/config_unix.go b/commands/config_unix.go
+index f5821f648..413170326 100644
+--- a/commands/config_unix.go
++++ b/commands/config_unix.go
+@@ -1,5 +1,7 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build zos
+
++// Tags altered by Wharf (added zos)
++//
+ package commands
+
+ import (
+diff --git a/commands/helpers/archive/tarzstd/ops_unix.go b/commands/helpers/archive/tarzstd/ops_unix.go
+index 8020a8801..368235dfd 100644
+--- a/commands/helpers/archive/tarzstd/ops_unix.go
++++ b/commands/helpers/archive/tarzstd/ops_unix.go
+@@ -29,6 +29,12 @@ func lchmod(name string, mode os.FileMode) error {
+ }
+
+ func lchtimes(name string, mode os.FileMode, atime, mtime time.Time) error {
++    if runtime.GOOS == "zos" {
++        if err := lchmod(name, mode); err != nil {
++            return err
++        }
++    }
++
+        at := unix.NsecToTimeval(atime.UnixNano())
+        mt := unix.NsecToTimeval(mtime.UnixNano())
+        tv := [2]unix.Timeval{at, mt}
+diff --git a/commands/service_portable.go b/commands/service_portable.go
+index 5cfb83a4a..e19dc277e 100644
+--- a/commands/service_portable.go
++++ b/commands/service_portable.go
+@@ -1,5 +1,7 @@
+-//go:build !linux && !darwin && !windows
++//go:build !zos
+
++// Tags altered by Wharf (added !zos)
++//
+ package commands
+
+ import (
+@@ -8,5 +10,5 @@ import (
+ )
+
+ func setupOSServiceConfig(c *cli.Context, config *service.Config) {
+-       // not supported
++
+ }
+diff --git a/commands/service_zos.go b/commands/service_zos.go
+new file mode 100755
+index 000000000..c99f21567
+--- /dev/null
++++ b/commands/service_zos.go
+@@ -0,0 +1,42 @@
++//go:build zos
++
++// Tags altered by Wharf (added zos)
++//
++package commands
++
++import (
++       "os"
++
++       "github.com/kardianos/service"
++       "github.com/sirupsen/logrus"
++       "github.com/urfave/cli"
++       service_helpers "gitlab.com/gitlab-org/gitlab-runner/helpers/service"
++)
++
++func setupOSServiceConfig(c *cli.Context, config *service.Config) {
++       if os.Getuid() != 0 {
++               logrus.Fatal("The --user is not supported for non-root users")
++       }
++
++       user := c.String("user")
++       if user != "" {
++               config.Arguments = append(config.Arguments, "--user", user)
++       }
++
++       switch service.Platform() {
++       case "linux-systemd":
++               config.Dependencies = []string{
++                       "After=syslog.target network.target",
++               }
++               config.Option = service.KeyValue{
++                       "Restart": "always",
++               }
++       case "unix-systemv":
++               script := service_helpers.SysvScript()
++               if script != "" {
++                       config.Option = service.KeyValue{
++                               "SysvScript": script,
++                       }
++               }
++       }
++}
+diff --git a/go.mod b/go.mod
+index b7e7b8b87..f47f6f933 100644
+--- a/go.mod
++++ b/go.mod
+@@ -78,6 +78,8 @@ require (
+        sigs.k8s.io/yaml v1.3.0
+ )
+
++replace github.com/creack/pty v1.1.17 => ../pty
++
+ require (
+        cloud.google.com/go v0.110.9 // indirect
+        cloud.google.com/go/compute v1.23.2 // indirect
+diff --git a/helpers/archives/zip_extra_unix.go b/helpers/archives/zip_extra_unix.go
+index f6435a8eb..337ac8d53 100644
+--- a/helpers/archives/zip_extra_unix.go
++++ b/helpers/archives/zip_extra_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+
+ package archives
+
+diff --git a/helpers/process/group_unix.go b/helpers/process/group_unix.go
+index f52a48a8d..a87c3f20a 100644
+--- a/helpers/process/group_unix.go
++++ b/helpers/process/group_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+
+ package process
+
+diff --git a/helpers/process/killer_unix.go b/helpers/process/killer_unix.go
+index 712d9e7ce..17baab3ac 100644
+--- a/helpers/process/killer_unix.go
++++ b/helpers/process/killer_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+
+ package process
+
+diff --git a/log/dump_unix.go b/log/dump_unix.go
+index a6da24256..e350e817a 100644
+--- a/log/dump_unix.go
++++ b/log/dump_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+
+ package log
