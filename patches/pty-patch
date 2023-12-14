@@ -1,0 +1,38 @@
+diff --git a/ioctl_inner.go b/ioctl_inner.go
+index 272b50b..51960ba 100644
+--- a/ioctl_inner.go
++++ b/ioctl_inner.go
+@@ -1,5 +1,5 @@
+-//go:build !windows && !solaris && !aix
+-// +build !windows,!solaris,!aix
++//go:build !windows && !solaris && !aix && !zos
++// +build !windows,!solaris,!aix,!zos
+
+ package pty
+
+diff --git a/ioctl_zos.go b/ioctl_zos.go
+new file mode 100644
+index 0000000..cc32d71
+--- /dev/null
++++ b/ioctl_zos.go
+@@ -0,0 +1,20 @@
++//go:build zos
++// +build zos
++
++package pty
++
++import "syscall"
++
++// Local syscall const values.
++const (
++        TIOCGWINSZ = syscall.TIOCGWINSZ
++        TIOCSWINSZ = syscall.TIOCSWINSZ
++)
++
++func ioctlInner(fd, cmd, ptr uintptr) error {
++        err := syscall.Ioctl(int(fd), int(cmd), ptr)
++        if err != nil {
++                return err
++        }
++        return nil
++}

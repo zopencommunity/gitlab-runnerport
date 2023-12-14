@@ -148,3 +148,4 @@ index a6da24256..e350e817a 100644
 +//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
 
  package log
+
