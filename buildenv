@@ -35,11 +35,6 @@ zopen_config()
   FASTZIP_TAG=$(cat go.mod | grep fastzip | cut -d ' ' -f 2)
   GO-SOCK_TAG=$(cat go.mod | grep go-sockaddr | cut -d ' ' -f 2)
 
-  echo "============================="
-  echo $SYS_TAG
-  echo $FASTZIP_TAG
-  echo GO-SOCK-TAG
-  
   cd .. && echo ""
   git clone https://github.com/denisbrodbeck/machineid.git
   echo "Checking out $MACHINEID_TAG"
@@ -62,19 +57,19 @@ zopen_config()
   # curl -s -o pty--$PTY_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/pty--$PTY_TAG.patch"
   git apply -v ../deps-patches/pty--$PTY_TAG.patch
 
-  cd .. && echo "" && pwd
+  cd .. && echo ""
   git clone https://github.com/golang/sys.git
   echo "Checking out $SYS_TAG"
   cd sys
   git apply ../patches/sys.patch
 
-  cd .. && echo "" && pwd
+  cd .. && echo ""
   git clone https://github.com/saracen/fastzip.git
   echo "Checking out $FASTZIP_TAG"
   cd fastzip
   git apply ../patches/fastzip.patch
 
-  cd .. && echo "" && pwd
+  cd .. && echo ""
   git clone https://github.com/hashicorp/go-sockaddr.git
   echo "Checking out $GO-SOCK_TAG"
   cd go-sockaddr
@@ -86,7 +81,6 @@ zopen_config()
 
 zopen_wharf()
 {
-  echo "++++++++++++++++++++++++++++"
   cd gilab-runner
   git checkout 16-6-stable
 
