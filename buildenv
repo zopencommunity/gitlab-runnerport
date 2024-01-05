@@ -4,16 +4,20 @@ export ZOPEN_STABLE_TAG="v${GITLAB_RUNNER_VERSION}"
 export ZOPEN_STABLE_URL="https://gitlab.com/gitlab-org/gitlab-runner.git"
 export ZOPEN_STABLE_DEPS="comp_go git curl wharf"
 export ZOPEN_BUILD_LINE="STABLE"
-export ZOPEN_CATEGORIES="development"
-export ZOPEN_NAME="gitlab-runner"
+
+export ZOPEN_DEV_TAG="v${GITLAB_RUNNER_VERSION}"
+export ZOPEN_DEV_URL="https://gitlab.com/gitlab-org/gitlab-runner.git"
+export ZOPEN_DEV_DEPS="comp_go git curl wharf"
 
 export ZOPEN_COMP=GO
 export ZOPEN_CONFIGURE="zopen_wharf"
 export ZOPEN_CONFIGURE_MINIMAL=1
-export ZOPEN_MAKE="zopen_build"
-export ZOPEN_MAKE_MINIMAL=1
+export ZOPEN_MAKE="skip"
 export ZOPEN_CHECK="skip"
 export ZOPEN_CLEAN="zopen_clean"
+export ZOPEN_INSTALL="zopen_install" 
+
+export ZOPEN_NAME="gitlab-runner"
 
 zopen_init()
 {
@@ -26,15 +30,11 @@ zopen_init()
 
 zopen_wharf()
 {
-  MACHINEID_TAG=$(cat go.mod | grep machineid | cut -d ' ' -f 2)
-
   cd .. && echo ""
   git clone https://github.com/denisbrodbeck/machineid.git
-  echo "Checking out $MACHINEID_TAG"
-  cd machineid && git -c advice.detachedHead=false checkout $MACHINEID_TAG
+  cd machineid
   go mod init && go mod tidy
-  curl -s -o machineid--$MACHINEID_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/machineid--$MACHINEID_TAG.patch"
-  git apply -v machineid--$MACHINEID_TAG.patch
+  git apply -v --ignore-space-change --ignore-whitespace ../patches/machineid-patch
 
   cd .. && echo ""
   git clone https://github.com/Azure/azure-sdk-for-go.git
@@ -70,19 +70,12 @@ zopen_wharf()
 
   cd ..
   wharf ./gitlab-runner/...
-}
-
-zopen_build()
-{
   cd gitlab-runner
-  go build
 }
 
-zopen_post_install()
+zopen_install()
 {
-  echo "here-at-post $PWD"
-  echo "here-at-post $ZOPEN_INSTALL_DIR"
-  mv $ZOPEN_INSTALL_DIR/bin/gitlab-runner $ZOPEN_INSTALL_DIR/bin/gitlab-runner
+  go install 
 }
 
 zopen_clean()
