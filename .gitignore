@@ -1,0 +1,16 @@
+log/
+log.DEV/
+log.STABLE/
+build/
+install/
+azure-sdk-for-go/
+fastzip/
+gitlab-runner/
+go/
+go-sockaddr/
+go.work
+go.work.sum
+machineid/
+pty/
+sys/
+.buildenv.swp

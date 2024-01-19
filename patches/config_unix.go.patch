@@ -1,0 +1,22 @@
+From d77f156b61047537f9f3a33b9ffdaa9d716da9a0 Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Wed, 13 Dec 2023 22:31:10 -0500
+Subject: [PATCH] Add zOS support
+
+---
+ commands/config_unix.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/commands/config_unix.go b/commands/config_unix.go
+index f5821f648..faf0e2c18 100644
+--- a/commands/config_unix.go
++++ b/commands/config_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+ 
+ package commands
+ 
+-- 
+2.42.1
+

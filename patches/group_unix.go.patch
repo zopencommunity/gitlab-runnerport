@@ -1,0 +1,22 @@
+From b7252c06aeab2e70de1b5be45c7bbd4c2cf38f96 Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Wed, 13 Dec 2023 22:32:18 -0500
+Subject: [PATCH] Add zOS support
+
+---
+ helpers/process/group_unix.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/helpers/process/group_unix.go b/helpers/process/group_unix.go
+index f52a48a8d..a87c3f20a 100644
+--- a/helpers/process/group_unix.go
++++ b/helpers/process/group_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+ 
+ package process
+ 
+-- 
+2.42.1
+
