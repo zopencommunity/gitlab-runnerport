@@ -19,8 +19,8 @@ export ZOPEN_CLEAN="zopen_clean"
 zopen_init()
 {
   export CGO_ENABLED=0
-  export GOTMPDIR=$HOME/go-tmpdir
-  mkdir -p $HOME/go-tmpdir
+  export GOTMPDIR=$PWD/go-tmpdir
+  mkdir -p $PWD/go-tmpdir
   export PATH=$PATH:$GOROOT/go-build-zos/bin
   export GOBIN=$ZOPEN_INSTALL_DIR/bin
   mkdir -p $ZOPEN_INSTALL_DIR/bin
