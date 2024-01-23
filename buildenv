@@ -1,88 +1,102 @@
-GITLAB_RUNNER_VERSION="16.6.0"
+# bump: gitlab-runner-version /RUNNER_VERSION="(.*)"/ https://gitlab.com/gitlab-org/gitlab-runner.git|semver:*
+RUNNER_VERSION="16.6.1"
 
-export ZOPEN_STABLE_TAG="v${GITLAB_RUNNER_VERSION}"
+export ZOPEN_STABLE_TAG="v${RUNNER_VERSION}"
 export ZOPEN_STABLE_URL="https://gitlab.com/gitlab-org/gitlab-runner.git"
-export ZOPEN_STABLE_DEPS="comp_go git curl wharf"
+export ZOPEN_STABLE_DEPS="comp_go git curl"
 export ZOPEN_BUILD_LINE="STABLE"
-
-export ZOPEN_DEV_TAG="v${GITLAB_RUNNER_VERSION}"
-export ZOPEN_DEV_URL="https://gitlab.com/gitlab-org/gitlab-runner.git"
-export ZOPEN_DEV_DEPS="comp_go git curl wharf"
+export ZOPEN_CATEGORIES="development source_control"
+export ZOPEN_NAME="gitlab-runner"
 
 export ZOPEN_COMP=GO
-export ZOPEN_CONFIGURE="zopen_wharf"
+export ZOPEN_CONFIGURE="zopen_config"
 export ZOPEN_CONFIGURE_MINIMAL=1
 export ZOPEN_MAKE="skip"
+export ZOPEN_INSTALL="zopen_install"
 export ZOPEN_CHECK="skip"
 export ZOPEN_CLEAN="zopen_clean"
-export ZOPEN_INSTALL="zopen_install" 
-
-export ZOPEN_NAME="gitlab-runner"
 
 zopen_init()
 {
   export CGO_ENABLED=0
-  export GOBIN=$ZOPEN_INSTALL_DIR/bin
+  export GOTMPDIR=$HOME/go-tmpdir
+  mkdir -p $HOME/go-tmpdir
   export PATH=$PATH:$GOROOT/go-build-zos/bin
+  export GOBIN=$ZOPEN_INSTALL_DIR/bin
   mkdir -p $ZOPEN_INSTALL_DIR/bin
   unset CC CXX
 }
 
-zopen_wharf()
+zopen_config()
 {
+  MACHINEID_TAG=$(cat go.mod | grep machineid | cut -d ' ' -f 2)
+  AZURESDK=$(cat go.mod | grep azure-sdk-for-go/sdk/storage/azblob | cut -d ' ' -f 2)
+  AZURESDK_TAG="sdk-storage-azblob-${AZURESDK}"
+  PTY_TAG=$(cat go.mod | grep pty | cut -d ' ' -f 2)
+  FASTZIP_TAG=$(cat go.mod | grep fastzip | cut -d ' ' -f 2)
+  GOSOCKADDR_TAG=$(cat go.mod | grep go-sockaddr | cut -d ' ' -f 2)
+  SYS_TAG=$(cat go.mod | grep x\/sys | cut -d ' ' -f 2)
+
   cd .. && echo ""
   git clone https://github.com/denisbrodbeck/machineid.git
-  cd machineid
+  echo "Checking out $MACHINEID_TAG"
+  cd machineid && git -c advice.detachedHead=false checkout $MACHINEID_TAG
   go mod init && go mod tidy
-  git apply -v --ignore-space-change --ignore-whitespace ../patches/machineid-patch
+  curl -s -o machineid--$MACHINEID_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/machineid--$MACHINEID_TAG.patch"
+  git apply -v --ignore-space-change --ignore-whitespace machineid--$MACHINEID_TAG.patch
 
   cd .. && echo ""
   git clone https://github.com/Azure/azure-sdk-for-go.git
-  cd azure-sdk-for-go
-  git apply -v --ignore-space-change --ignore-whitespace ../patches/azure-patch
+  echo "Checking out $AZURESDK_TAG"
+  cd azure-sdk-for-go && git -c advice.detachedHead=false checkout "sdk/storage/azblob/$AZURESDK"
+  curl -s -o azure-sdk-for-go--$AZURESDK_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/azure-sdk-for-go--$AZURESDK_TAG.patch"
+  git apply -v --ignore-space-change --ignore-whitespace azure-sdk-for-go--$AZURESDK_TAG.patch
 
   cd .. && echo ""
   git clone https://github.com/creack/pty.git
-  cd pty
-  git apply -v --ignore-space-change --ignore-whitespace  ../patches/pty-patch
-
-  cd .. && echo ""
-  git clone https://github.com/golang/sys.git
-  cd sys
-  git apply -v --ignore-space-change --ignore-whitespace ../patches/sys-patch
+  echo "Checking out $PTY_TAG"
+  cd pty && git -c advice.detachedHead=false checkout $PTY_TAG
+  curl -s -o pty--$PTY_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/pty--$PTY_TAG.patch"
+  git apply -v --ignore-space-change --ignore-whitespace pty--$PTY_TAG.patch
 
   cd .. && echo ""
   git clone https://github.com/saracen/fastzip.git
-  cd fastzip
-  git apply -v --ignore-space-change --ignore-whitespace ../patches/fastzip-patch
+  echo "Checking out $FASTZIP_TAG"
+  cd fastzip && git -c advice.detachedHead=false checkout $FASTZIP_TAG
+  curl -s -o fastzip--$FASTZIP_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/fastzip--$FASTZIP_TAG.patch"
+  git apply -v --ignore-space-change --ignore-whitespace fastzip--$FASTZIP_TAG.patch
 
   cd .. && echo ""
   git clone https://github.com/hashicorp/go-sockaddr.git
-  cd go-sockaddr
-  git apply -v --ignore-space-change --ignore-whitespace  ../patches/go-sockaddr-patch
+  echo "Checking out $GOSOCKADDR_TAG"
+  cd go-sockaddr && git -c advice.detachedHead=false checkout $GOSOCKADDR_TAG
+  curl -s -o go-sockaddr--$GOSOCKADDR_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/go-sockaddr--$GOSOCKADDR_TAG.patch"
+  git apply -v --ignore-space-change --ignore-whitespace go-sockaddr--$GOSOCKADDR_TAG.patch
 
   cd .. && echo ""
-  go work init ./gitlab-runner ./sys ./fastzip ./go-sockaddr ./machineid ./azure-sdk-for-go/sdk/storage/azblob ./pty
+  git clone https://github.com/golang/sys.git
+  echo "Checking out $SYS_TAG"
+  cd sys && git -c advice.detachedHead=false checkout $SYS_TAG
+  curl -s -o sys--$SYS_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/sys--$SYS_TAG.patch"
+  git apply -v --ignore-space-change --ignore-whitespace sys--$SYS_TAG.patch
 
-  cd gitlab-runner
-  git checkout 16-6-stable
-  git apply -v --ignore-space-change --ignore-whitespace ../patches/gitlab-runner-patch
-
-  cd ..
-  wharf ./gitlab-runner/...
-  cd gitlab-runner
+  cd .. && echo ""
+  go work init ./gitlab-runner ./machineid ./azure-sdk-for-go/sdk/storage/azblob ./pty ./fastzip ./go-sockaddr ./sys
 }
 
 zopen_install()
 {
-  go install 
+  cd gitlab-runner
+  echo "here-at-install $PWD"
+  echo "GOBIN is $GOBIN"
+  go install
 }
 
 zopen_clean()
 {
   echo "here-at-clean $PWD"
   chmod -R 755 go
-  rm -rf go* machineid azure-sdk-for-go pty gitlab-runner sys fastzip go-sockaddr
+  rm -rf go* gitlab-runner machineid azure-sdk-for-go pty fastzip go-sockaddr sys
 }
 
 zopen_check_results()
@@ -100,7 +114,5 @@ zopen_check_results()
 
 zopen_get_version()
 {
-  # Modify to echo the version of your tool/library
-  # Rather than hardcoding the version, obtain the version by running the tool/library
-  echo "${GITLAB_RUNNER_VERSION}"
+  echo "$RUNNER_VERSION"
 }

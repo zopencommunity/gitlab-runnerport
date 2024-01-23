@@ -1,0 +1,22 @@
+From b4eb906033d1d80a7649b8fc061da442e17ee2b0 Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Wed, 13 Dec 2023 22:32:08 -0500
+Subject: [PATCH] Add zOS support
+
+---
+ helpers/archives/zip_extra_unix.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/helpers/archives/zip_extra_unix.go b/helpers/archives/zip_extra_unix.go
+index f6435a8eb..337ac8d53 100644
+--- a/helpers/archives/zip_extra_unix.go
++++ b/helpers/archives/zip_extra_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+ 
+ package archives
+ 
+-- 
+2.42.1
+

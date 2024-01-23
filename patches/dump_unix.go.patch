@@ -1,0 +1,22 @@
+From db7437fbd1acc3d27e24fc635fcac58dca333bcc Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Wed, 13 Dec 2023 22:32:39 -0500
+Subject: [PATCH] Add zOS support
+
+---
+ log/dump_unix.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/log/dump_unix.go b/log/dump_unix.go
+index a6da24256..e350e817a 100644
+--- a/log/dump_unix.go
++++ b/log/dump_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+ 
+ package log
+ 
+-- 
+2.42.1
+

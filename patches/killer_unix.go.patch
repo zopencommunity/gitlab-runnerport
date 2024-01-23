@@ -1,0 +1,22 @@
+From 04d8fc8eed1c769d169e9f344bcce3faf9fae2b8 Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Wed, 13 Dec 2023 22:32:30 -0500
+Subject: [PATCH] Add zOS support
+
+---
+ helpers/process/killer_unix.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/helpers/process/killer_unix.go b/helpers/process/killer_unix.go
+index 712d9e7ce..17baab3ac 100644
+--- a/helpers/process/killer_unix.go
++++ b/helpers/process/killer_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+ 
+ package process
+ 
+-- 
+2.42.1
+

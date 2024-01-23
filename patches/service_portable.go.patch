@@ -1,0 +1,22 @@
+From 88894ab0cb4e67da6ec94cb7d549ac351ed617b0 Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Wed, 13 Dec 2023 22:31:43 -0500
+Subject: [PATCH] Add zOS support
+
+---
+ commands/service_portable.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/commands/service_portable.go b/commands/service_portable.go
+index 5cfb83a4a..78e3083a7 100644
+--- a/commands/service_portable.go
++++ b/commands/service_portable.go
+@@ -1,4 +1,4 @@
+-//go:build !linux && !darwin && !windows
++//go:build !linux && !darwin && !windows && !zos
+ 
+ package commands
+ 
+-- 
+2.42.1
+

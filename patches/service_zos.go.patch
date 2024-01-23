@@ -1,0 +1,59 @@
+From 9acf7e9a1140417ce401a42e4461731e336b6bcc Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Wed, 13 Dec 2023 22:31:56 -0500
+Subject: [PATCH] Add zOS support
+
+---
+ commands/service_zos.go | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 commands/service_zos.go
+
+diff --git a/commands/service_zos.go b/commands/service_zos.go
+new file mode 100644
+index 000000000..30e94e778
+--- /dev/null
++++ b/commands/service_zos.go
+@@ -0,0 +1,40 @@
++//go:build zos
++
++package commands
++
++import (
++	"os"
++
++	"github.com/kardianos/service"
++	"github.com/sirupsen/logrus"
++	"github.com/urfave/cli"
++	service_helpers "gitlab.com/gitlab-org/gitlab-runner/helpers/service"
++)
++
++func setupOSServiceConfig(c *cli.Context, config *service.Config) {
++	if os.Getuid() != 0 {
++		logrus.Fatal("The --user is not supported for non-root users")
++	}
++
++	user := c.String("user")
++	if user != "" {
++		config.Arguments = append(config.Arguments, "--user", user)
++	}
++
++	switch service.Platform() {
++	case "linux-systemd":
++		config.Dependencies = []string{
++			"After=syslog.target network.target",
++		}
++		config.Option = service.KeyValue{
++			"Restart": "always",
++		}
++	case "unix-systemv":
++		script := service_helpers.SysvScript()
++		if script != "" {
++			config.Option = service.KeyValue{
++				"SysvScript": script,
++			}
++		}
++	}
++}
+-- 
+2.42.1
+
