@@ -81,7 +81,7 @@ zopen_config()
   cd sys && git -c advice.detachedHead=false checkout $SYS_TAG
   # curl -s -o sys--$SYS_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/sys--$SYS_TAG.patch"
   # git apply -v --ignore-space-change --ignore-whitespace sys--$SYS_TAG.patch
-  git apply -v --ignore-space-change --ignore-whitespace deps-patches/sys--$SYS_TAG.patch
+  git apply -v --ignore-space-change --ignore-whitespace ../deps-patches/sys--$SYS_TAG.patch
 
   cd .. && echo ""
   go work init ./gitlab-runner ./machineid ./azure-sdk-for-go/sdk/storage/azblob ./pty ./fastzip ./go-sockaddr ./sys
