@@ -46,7 +46,7 @@ zopen_config()
   git apply -v --ignore-space-change --ignore-whitespace machineid--$MACHINEID_TAG.patch
 
   cd .. && echo ""
-  git clone https://github.com/Azure/azure-sdk-for-go.git
+  git clone --depth=1 https://github.com/Azure/azure-sdk-for-go.git
   echo "Checking out $AZURESDK_TAG"
   cd azure-sdk-for-go && git -c advice.detachedHead=false checkout "sdk/storage/azblob/$AZURESDK"
   curl -s -o azure-sdk-for-go--$AZURESDK_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/azure-sdk-for-go--$AZURESDK_TAG.patch"
