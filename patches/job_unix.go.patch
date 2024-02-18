@@ -1,0 +1,22 @@
+From 516797d1f405894ccd5a18c575ac981ca7c37be2 Mon Sep 17 00:00:00 2001
+From: v1gnesh <v1gnesh@users.noreply.github.com>
+Date: Sun, 18 Feb 2024 00:40:34 -0500
+Subject: [PATCH] upstream rename of group_unix to job_unix
+
+---
+ helpers/process/job_unix.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/helpers/process/job_unix.go b/helpers/process/job_unix.go
+index 6ac69ca50..2f0b40de1 100644
+--- a/helpers/process/job_unix.go
++++ b/helpers/process/job_unix.go
+@@ -1,4 +1,4 @@
+-//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris
++//go:build aix || android || darwin || dragonfly || freebsd || hurd || illumos || linux || netbsd || openbsd || solaris || zos
+ 
+ package process
+ 
+-- 
+2.42.1
+
