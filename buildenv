@@ -1,5 +1,5 @@
 # bump: gitlab-runner-version /RUNNER_VERSION="(.*)"/ https://gitlab.com/gitlab-org/gitlab-runner.git|semver:*
-RUNNER_VERSION="16.8.0"
+RUNNER_VERSION="16.9.0"
 
 export ZOPEN_STABLE_TAG="v${RUNNER_VERSION}"
 export ZOPEN_STABLE_URL="https://gitlab.com/gitlab-org/gitlab-runner.git"
@@ -46,9 +46,11 @@ zopen_config()
   git apply -v --ignore-space-change --ignore-whitespace machineid--$MACHINEID_TAG.patch
 
   cd .. && echo ""
-  git clone https://github.com/Azure/azure-sdk-for-go.git
-  echo "Checking out $AZURESDK_TAG"
-  cd azure-sdk-for-go && git -c advice.detachedHead=false checkout "sdk/storage/azblob/$AZURESDK"
+  echo "Cloning & checking out $AZURESDK_TAG"
+  # git clone --depth=1 https://github.com/Azure/azure-sdk-for-go.git
+  # cd azure-sdk-for-go && git -c advice.detachedHead=false checkout "sdk/storage/azblob/$AZURESDK"
+  git clone -c advice.detachedHead=false --depth=1 --branch "sdk/storage/azblob/$AZURESDK" https://github.com/azure/azure-sdk-for-go.git
+  cd azure-sdk-for-go
   curl -s -o azure-sdk-for-go--$AZURESDK_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/azure-sdk-for-go--$AZURESDK_TAG.patch"
   git apply -v --ignore-space-change --ignore-whitespace azure-sdk-for-go--$AZURESDK_TAG.patch
 
@@ -77,8 +79,9 @@ zopen_config()
   git clone https://github.com/golang/sys.git
   echo "Checking out $SYS_TAG"
   cd sys && git -c advice.detachedHead=false checkout $SYS_TAG
-  curl -s -o sys--$SYS_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/sys--$SYS_TAG.patch"
-  git apply -v --ignore-space-change --ignore-whitespace sys--$SYS_TAG.patch
+  # curl -s -o sys--$SYS_TAG.patch "https://raw.githubusercontent.com/ZOSOpenTools/wharf/main/deps-patches/sys--$SYS_TAG.patch"
+  # git apply -v --ignore-space-change --ignore-whitespace sys--$SYS_TAG.patch
+  git apply -v --ignore-space-change --ignore-whitespace ../deps-patches/sys--$SYS_TAG.patch
 
   cd .. && echo ""
   go work init ./gitlab-runner ./machineid ./azure-sdk-for-go/sdk/storage/azblob ./pty ./fastzip ./go-sockaddr ./sys
